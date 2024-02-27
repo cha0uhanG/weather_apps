@@ -20,7 +20,7 @@ class _UiScreenState extends State<WeatherUiScreen> {
           Center(
               child: Text("${widget.location},",style: const TextStyle(fontSize: 40,fontWeight: FontWeight.bold),) ),
           const SizedBox(height: 20,),
-          Text("${widget.temp ?? 'unavailable'}\u2103",style: const TextStyle(fontSize: 70,fontWeight: FontWeight.bold),),
+          Text("${widget.temp ?? 'unavailable'}\u2103",style: const TextStyle(fontSize: 71,fontWeight: FontWeight.bold),),
         ],
       ),
     );
