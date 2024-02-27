@@ -90,7 +90,7 @@ class _SignupPageState extends State<SignupPage> {
                       context
                           .read<AuthBloc>()
                           .add(PerformSignUp(userid, psswrd));
-
+                      Navigator.pushReplacementNamed(context, LocationPage.page);
                     },
                     child: const Text('Sign Up'),
                   ),

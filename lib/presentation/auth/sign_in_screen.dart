@@ -89,6 +89,7 @@ class _SigninPageState extends State<SigninPage> {
                       print(psswrd);
                       print(userid);
                       try {
+                        Navigator.pushReplacementNamed(context, LocationPage.page);
                         context
                             .read<AuthBloc>()
                             .add(PerformSignIn(userid, psswrd));

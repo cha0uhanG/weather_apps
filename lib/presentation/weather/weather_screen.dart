@@ -33,7 +33,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         backgroundColor: Colors.grey[800],
         title: const Center(
             child:
-                Text('Weather Checker', style: TextStyle(color: Colors.white))),
+                Text('Weather Checkerr', style: TextStyle(color: Colors.white))),
         actions: [
           IconButton(
             onPressed: _signOut,
