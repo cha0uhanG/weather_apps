@@ -44,10 +44,8 @@ extension GetItInjectableX on _i1.GetIt {
           gh<String>(),
         ));
     gh.factory<_i5.SearchCityEvent>(() => _i5.SearchCityEvent(gh<String>()));
-    gh.factory<_i5.SearchCityLocationEvent>(() => _i5.SearchCityLocationEvent(
-          gh<String>(),
-          gh<String>(),
-        ));
+    gh.factory<_i5.SearchCityLocationEvent>(
+        () => _i5.SearchCityLocationEvent());
     gh.factory<_i3.SignInCompleted>(() => _i3.SignInCompleted());
     gh.factory<_i3.SignUpCompleted>(() => _i3.SignUpCompleted());
     gh.factory<_i5.WeatherBloc>(() => _i5.WeatherBloc());

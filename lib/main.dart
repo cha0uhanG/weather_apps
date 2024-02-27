@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           child: const WeatherScreen(),
         ) ,
         LocationPage.page: (context) => BlocProvider(
-          create: (context) => getIt<WeatherBloc>(),
+          create: (context) => getIt<WeatherBloc>()..add(SearchCityLocationEvent()),
           child: const LocationPage(),
         ) ,
       },

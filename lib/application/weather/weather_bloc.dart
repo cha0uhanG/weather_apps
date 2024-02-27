@@ -6,6 +6,7 @@ import 'package:weather_app/domain/weather/dio_service.dart';
 import 'package:weather_app/domain/weather/model.dart';
 import 'package:weather_app/injection.dart';
 import 'package:weather_app/preference.dart';
+import 'dart:developer' as developer;
 
 @injectable
 class WeatherBlocEvent extends Equatable {
@@ -27,11 +28,15 @@ class SearchCityEvent extends WeatherBlocEvent {
 }
 
 @injectable
-class SearchCityLocationEvent extends WeatherBlocEvent {
-  final String lat;
-  final String lng;
+class SearchCityResponseState extends WeatherBlocState {
+  final String location;
+  final double temp;
+  SearchCityResponseState(this.location,this.temp);
 
-  SearchCityLocationEvent(this.lat, this.lng);
+}
+
+@injectable
+class SearchCityLocationEvent extends WeatherBlocEvent {
 }
 
 @injectable
@@ -62,50 +67,49 @@ class WeatherBloc extends Bloc<WeatherBlocEvent, WeatherBlocState> {
 
   WeatherBloc() : super(InitialWeatherState()) {
     // event handler was added
-    on<WeatherBlocEvent>(mapEventToState);
-  }
-
-
-  Stream<WeatherBlocState> mapEventToState(WeatherBlocEvent event,
-      Emitter<WeatherBlocState> emit) async* {
-    if (event is SearchCityEvent) {
-      yield LoadingWeatherState();
-      try {
+    on<WeatherBlocEvent>((event,emit) async{
+      if (event is SearchCityEvent) {
+        emit(LoadingWeatherState());
+        try {
+          var dioService = getIt<DioService>();
+          var response = await dioService.getTempWithLocation(event.cityName);
+          emit(SearchCityResponseState(event.cityName, response??0.0));
+          print(response);
+        } catch (e) {
+          emit(WeatherFailureState(e.toString())) ;
+        }
+      } else if (event is SearchCityLocationEvent) {
+        // yield LoadingWeatherState();
         var dioService = getIt<DioService>();
-        var response = await dioService.getTempWithLocation(event.cityName);
-        print(response);
-      } catch (e) {
-        yield WeatherFailureState(e.toString());
-      }
-    } else if (event is InitialWeatherState) {
-      // yield LoadingWeatherState();
-      var dioService = getIt<DioService>();
-      var responseOne = await dioService.getTempWithLocation("Almora");
-      print(responseOne);
-      await Geolocator.checkPermission();
-      await Geolocator.requestPermission(); // asking permssion from user
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high); // exxtracting location
-      var latitude = position.latitude.toString();
-      var longitude = position.longitude.toString();
-      WeatherData? response =
-      await dioService.getWeather(latitude, longitude);
-      if (response != null) {
-        MyPref().temp.val = response.temperature;
-        MyPref().stateName.val = response.cityName;
-        MyPref().humidity.val = response.humidity;
-      } else {
-        response = WeatherData(temperature: MyPref().temp.val,
-            cityName: MyPref().stateName.val,
-            humidity: MyPref().humidity.val);
-      }
-      yield WeatherResponseState(response);
-      /* try {
+        await Geolocator.checkPermission();
+        await Geolocator.requestPermission();
+        developer.log("Permission",name: "mili");
+        print("here");// asking permssion from user
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high); // exxtracting location
+        var latitude = position.latitude.toString();
+        var longitude = position.longitude.toString();
+        WeatherData? response = await dioService.getWeather(latitude, longitude);
+        if (response != null) {
+          MyPref().temp.val = response.temperature;
+          MyPref().stateName.val = response.cityName;
+          MyPref().humidity.val = response.humidity;
+        } else {
+          response = WeatherData(temperature: MyPref().temp.val,
+              cityName: MyPref().stateName.val,
+              humidity: MyPref().humidity.val);
+        }
+        emit(WeatherResponseState(response));
+        /* try {
 
         print(response);
       } catch (e) {
         yield WeatherFailureState(e.toString());
       }*/
-    }
+      }
+    });
   }
+
+
+
 }
